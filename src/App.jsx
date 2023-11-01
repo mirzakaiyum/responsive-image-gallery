@@ -2,14 +2,16 @@ import { useState } from 'react'
 import favicon from '/favicon.svg'
 import './index.css'
 
-import Layout from './components/Layout'
+import Navigation from './components/Navigation'
+import GridContainer from './components/GridContainer'
 
 
 function App() {
 
   return (
     <>
-      <Layout />
+      <Navigation />
+      <GridContainer />
     </>
   )
 }
