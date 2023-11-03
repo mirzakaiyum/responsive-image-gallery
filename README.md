@@ -28,8 +28,6 @@ It is a responsive gallery with extra added functionality such as file upload, s
 
 ![Thumbnail](/screenshots/thumbnail.jpeg)
 
-![Drag and Drop](/screenshots/drag-and-drop.gif)
-
 ## Features <a name="features"></a>
 This is a mini project on gallery. It is representing how a file manager for a image gallery would look like.
 
@@ -54,6 +52,8 @@ A a third `indeterminate` state was added to `Select All` checkbox to better ind
 
 ## Tools, and Libraries <a name="usage"></a>
 `React` v18.2.0 was used for this project last. For styling `Tailwind CSS` was used to match the demo that was sent from Ollyo. `DND kit` library was used for smooth drag and drop experience.
+
+![Drag and Drop](/screenshots/drag-and-drop.gif)
 
 ## Packages Used <a name="packages"></a>
 Inter Variable font was used for this project provided by `FrontSource` and Icons used from `HeroIcons`.
