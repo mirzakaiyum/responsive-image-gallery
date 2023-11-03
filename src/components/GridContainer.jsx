@@ -1,48 +1,72 @@
-import imageData from "./imageData";
-import { ImageCard } from "./ImageCard";
 import { useState } from "react";
-import { PhotoIcon } from "@heroicons/react/24/outline";
 import GridCanvas from "./GridCanvas";
+import photos from "./photos.json";
+import TitleBar from "./TitleBar";
 
 export default function GridContainer() {
-  
-  
+  const [items, setItems] = useState(photos);
+  const [activeId, setActiveId] = useState(null);
+
+  const [isCheckAll, setIsCheckAll] = useState(false);
+  const [isCheck, setIsCheck] = useState([]);
+
+  function handleFileChange(e) {
+    const fileURL = URL.createObjectURL(e.target.files[0]);
+    setItems([...items, fileURL]);
+  }
+
+  function handleSelectAll() {
+    setIsCheckAll(!isCheckAll);
+    setIsCheck(items.map((_, index) => index));
+    if (isCheckAll) {
+      setIsCheck([]);
+    }
+  }
+
+  function handleCheck(check) {
+    isCheck.includes(check) ? setIsCheck(isCheck.filter((item) => item !== check)) : setIsCheck([...isCheck, check])
+  }
+console.log(isCheck)
+
+  function handleDelete() {
+    const checkedItems = items.filter((_, index) => !isCheck.includes(index));
+    setItems(checkedItems);
+    setIsCheck([]);
+    setIsCheckAll(false);
+  }
+
+  function checkIsIntermediate() {
+    return isCheck.length >= 1 && isCheck.length < items.length;
+  }
+
   return (
     <main className="bg-slate-100 min-h-[85vh]">
       <div className="mx-auto max-w-4xl py-6 sm:px-6 lg:px-8">
-        <div className="bg-white border rounded-lg min-h-[500px]">
-          <div className="flex flex-row justify-between py-4 sm:px-6 lg:px-8 border-b">
+        <div className="mx-2 bg-white border rounded-lg min-h-[500px]">
+          <div className="py-4 px-6 border-b">
             {/* Top section */}
-            <div>
-              <div className="mb-[0.125rem] block min-h-[1.5rem]">
-                <input
-                  className="relative float-left  mr-[6px] mt-[0.15rem] h-[1.125rem] w-[1.125rem] accent-blue-500"
-                  type="checkbox"
-                  value=""
-                  id="checkboxDefault"
-                />
-                <label
-                  className="font-semibold inline-block pl-[0.15rem] hover:cursor-pointer"
-                  htmlFor="checkboxDefault"
-                >
-                  3 Files found
-                </label>
-              </div>
-            </div>
-
-            <div>
-              <button className="bg-white border-0 text-red-600">
-                Delete Files
-              </button>
-            </div>
+            <TitleBar
+              isCheckAll={isCheckAll}
+              isCheck={isCheck}
+              handleSelectAll={handleSelectAll}
+              handleDelete={handleDelete}
+              checkIsIntermediate={checkIsIntermediate}
+            />
           </div>
 
           <div>
-              <GridCanvas />
+            <GridCanvas
+              items={items}
+              setItems={setItems}
+              activeId={activeId}
+              setActiveId={setActiveId}
+              handleCheck={handleCheck}
+              isCheck={isCheck}
+              handleFileChange={handleFileChange}
+            />
           </div>
         </div>
       </div>
     </main>
   );
 }
-

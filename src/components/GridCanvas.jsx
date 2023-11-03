@@ -1,4 +1,3 @@
-import {useState} from 'react';
 import {
   DndContext,
   closestCenter,
@@ -7,22 +6,51 @@ import {
   DragOverlay,
   useSensor,
   useSensors,
-} from '@dnd-kit/core';
+} from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
   rectSortingStrategy,
-} from '@dnd-kit/sortable';
+} from "@dnd-kit/sortable";
 
-import {Grid} from './Grid';
-import {SortablePhoto} from './SortablePhoto';
-import {Photo} from './Photo';
-import photos from './photos.json';
+import { Grid } from "./Grid";
+import { SortablePhoto } from "./SortablePhoto";
+import { Photo } from "./Photo";
 
-const GridCanvas = () => {
-  const [items, setItems] = useState(photos);
-  const [activeId, setActiveId] = useState(null);
+export default function GridCanvas({
+  items,
+  setItems,
+  activeId,
+  setActiveId,
+  selected,
+  handleCheck,
+  isCheck,
+  handleFileChange,
+}) {
   const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
+
+  function handleDragStart(event) {
+    setActiveId(event.active.id);
+  }
+
+  function handleDragEnd(event) {
+    const {active, over} = event;
+  
+    if (active && over && active.id !== over.id) {
+      setItems((items) => {
+        const oldIndex = items.indexOf(active.id);
+        const newIndex = items.indexOf(over.id);
+  
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  
+    setActiveId(null);
+  }
+
+  function handleDragCancel() {
+    setActiveId(null);
+  }
 
   return (
     <DndContext
@@ -33,9 +61,17 @@ const GridCanvas = () => {
       onDragCancel={handleDragCancel}
     >
       <SortableContext items={items} strategy={rectSortingStrategy}>
-        <Grid>
+        <Grid handleFileChange={handleFileChange}>
           {items.map((url, index) => (
-            <SortablePhoto key={url} url={url} index={index} />
+            <SortablePhoto
+              key={url}
+              url={url}
+              index={index}
+              selected={selected}
+              handleCheck={handleCheck}
+              isCheck={isCheck}
+              position={index}
+            />
           ))}
         </Grid>
       </SortableContext>
@@ -47,29 +83,4 @@ const GridCanvas = () => {
       </DragOverlay>
     </DndContext>
   );
-
-  function handleDragStart(event) {
-    setActiveId(event.active.id);
-  }
-
-  function handleDragEnd(event) {
-    const {active, over} = event;
-
-    if (active.id !== over.id) {
-      setItems((items) => {
-        const oldIndex = items.indexOf(active.id);
-        const newIndex = items.indexOf(over.id);
-
-        return arrayMove(items, oldIndex, newIndex);
-      });
-    }
-
-    setActiveId(null);
-  }
-
-  function handleDragCancel() {
-    setActiveId(null);
-  }
-};
-
-export default GridCanvas;
+}
